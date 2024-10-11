@@ -1,99 +1,78 @@
-#include <ncurses.h>
-#include <cstdlib>
-#include <cstring>
+#include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
-#include <fstream>
-#include "menu.h"
-#include "game.h"
+#include "trie.hpp"
+
+bool is_letter(char ch) {
+  return (('A' <= ch) and (ch <= 'Z')) or (('a' <= ch) and (ch <= 'z'));
+}
+
+std::vector<std::string> line_to_words(std::string &line) {
+  std::vector<std::string> words;
+
+  std::string word;
+  for (int i = 0; i < line.size(); i++) {
+    if (is_letter(line[i])) {
+      word += line[i];
+    } else if (word.size() > 0) {
+      words.push_back(word);
+      word = "";
+    }
+  }
+
+  if (word.size() > 0) {
+    words.push_back(word);
+  }
+
+  return words;
+}
 
 int main() {
-  initscr();			
-	curs_set(0);
-	cbreak();
-	noecho();
-	keypad(stdscr, TRUE);
+  std::cout << "Print \"help\" to learn how to use this program" << std::endl;
 
-	if (has_colors() == FALSE) {
-    endwin();
-		printf("Your terminal does not support color\n");
-		exit(1);
-	}
+  Trie trie;
 
-	start_color();
-	// init_pair(1, COLOR_WHITE, COLOR_CYAN);
-	init_pair(1, COLOR_WHITE, COLOR_BLUE);
-	init_pair(2, COLOR_GREEN, COLOR_WHITE);
-	init_pair(3, COLOR_BLACK, COLOR_BLACK);
-	init_pair(4, COLOR_RED, COLOR_WHITE);
-	init_pair(5, COLOR_WHITE, COLOR_WHITE);
+  std::pair<bool, int> last_word_inf;
+  std::string last_word;
+  std::string input;
+  while (getline(std::cin, input)) {
+    if (input == "help") {
+      std::string line;
+      std::ifstream in("help.txt");
+      if (in.is_open()) {
+          while (std::getline(in, line)) {
+              std::cout << line << std::endl;
+          }
+      }
+      in.close(); 
+    } else if (input == "add text") {
+      std::string line;
+      getline(std::cin, line);
 
+      std::vector<std::string> words = line_to_words(line);
 
-	init_pair(6, COLOR_WHITE, COLOR_GREEN);
-	// init_pair(7, COLOR_WHITE, COLOR_BLUE);
-	init_pair(7, COLOR_WHITE, COLOR_MAGENTA);
+      for (int i = 0; i < words.size(); i++) {
+        trie.add_word(words[i]);
+      }
+    } else if (input == "complete") {
+      getline(std::cin, input);
+      //std::cin >> input;
+      last_word = input;
+      last_word_inf = trie.complete_prefix(input);
+      std::cout << input << std::endl;
+      if (last_word_inf.first) {
+        std::cout << "there is ambiguity" << std::endl;
+      }
+    } else if (input == "add letters") {
+      getline(std::cin, input);
+      last_word += input;
+      last_word_inf = trie.complete_prefix(last_word_inf.second, last_word, input);
+      std::cout << last_word << std::endl;
+    } else {
+      std::cout << "unknown command" << input << std::endl;
+    }
+  }
 
-	init_pair(8, COLOR_WHITE, COLOR_YELLOW);
-	init_pair(9, COLOR_WHITE, COLOR_BLACK);
-	// init_pair(10, COLOR_WHITE, COLOR_CYAN);
-	init_pair(10, COLOR_WHITE, COLOR_BLUE);
-	init_pair(13, COLOR_YELLOW, COLOR_YELLOW);
-	init_pair(14, COLOR_RED, COLOR_RED);
-
-
-	init_color(COLOR_MAGENTA, 574, 769, 913);
-	init_color(COLOR_YELLOW, 500, 500, 500);
-
-
-	wbkgd(stdscr, COLOR_PAIR(1));
-
-
-	GameState state = main_m;
-
-	while (true) {
-		switch (state) {
-			case main_m:
-				process_main_m(state);
-				break;
-			case play_m:
-				process_play_m(state);
-				break;
-			case local_m:
-				process_local_m(state);
-				break;
-			case online_m:
-				process_online_m(state);
-				break;
-			case help_m:
-				process_help_m(state);
-				break;
-			case easy_g:
-				process_easy_g(state);
-				break;
-			case TODO_m:
-				process_TODO_m(state);
-				break;
-				/*
-			case middle_g:
-				process_middle(state);
-				break;
-			case hard_g:
-				process_hard(state);
-				break;
-			case create_g:
-				process_create(state);
-				break;
-			case connect_g:
-				process_connect(state);
-				break;
-				*/
-			case exit_g:
-				goto Exit;
-		}
-	}
-
-Exit:
-	
-	endwin();
   return 0;
 }

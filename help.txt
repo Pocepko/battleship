@@ -1,31 +1,3 @@
-                      Rules                       
-The objective of Battleship is to sink all of your
-opponent's ships before they sink yours.          
-                                                  
-Each player is given a 10x10 grid. Players arrange
-their fleet of ships on their grid without letting
-their opponent see the placement. The fleet       
-consists of the following ships:                  
- 1 Carrier     (4 squares)                        
- 2 Battleship  (3 squares)                        
- 3 Cruiser     (2 squares)                        
- 4 Submarine   (1 square)                         
-                                                  
-Players take turns calling out coordinates on the 
-opponent's grid to try to locate their ships.     
-Coordinates are specified by a letter (A-J) and a 
-number (1-10). For example, "A3" or "G7".         
-                                                  
-If a player's guess lands on a square occupied by 
-an opponent's ship, it's a hit. If the guess lands
-on an empty square, it's a miss. Hits and misses  
-are marked on a separate tracking grid to keep    
-track of each player's guesses.                   
-                                                  
-When all squares of a ship are hit, it is         
-considered sunk. Once all of a player's ships are 
-sunk, they lose the game.                         
-                                                  
-The game ends when one player has successfully    
-sunk all of their opponent's ships. That player   
-is declared the winner.                           
+1. To add text, write "add text" and on the next line write the text
+2. To complete the word write "complete" and on the next line write the word
+3. To add symbols, write "add letters" and on the next line write these letters
